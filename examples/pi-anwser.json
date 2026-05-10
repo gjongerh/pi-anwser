@@ -1,0 +1,32 @@
+{
+  "enabled": true,
+  "trigger": {
+    "automaticDetection": true,
+    "structuredTool": true,
+    "runOn": "message_end",
+    "maxQuestions": 10,
+    "ignoreSoftEndingsUnlessOtherQuestionsExist": true
+  },
+  "popup": {
+    "placement": "right",
+    "width": "40%",
+    "oneQuestionAtATime": true,
+    "showProgress": true,
+    "allowSkip": true,
+    "allowBack": true,
+    "allowCancel": true
+  },
+  "review": {
+    "enabled": true,
+    "askConfirmationBeforeSend": true,
+    "sendTemplate": "Answers to your questions:\n\n{{answers}}"
+  },
+  "shortcuts": {
+    "toggleOverlay": "ctrl+shift+a",
+    "nextQuestion": "alt+right",
+    "previousQuestion": "alt+left",
+    "submitQuestion": "ctrl+enter",
+    "skipQuestion": "ctrl+shift+s",
+    "cancel": "escape"
+  }
+}
