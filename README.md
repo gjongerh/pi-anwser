@@ -8,8 +8,16 @@ A Pi extension that asks the user questions in a right-side popup overlay instea
 - Supports structured question asking through the `ask_user_questions` tool.
 - Supports open text, yes/no, single choice, and multiple choice questions.
 - Supports markdown checkbox, numbered, lettered, and bullet option lists.
-- Lets the user review answers before sending them back to the assistant.
-- Can reopen the last detected questions.
+- **Conditional branching** — questions with `showIf` only appear when a prior answer matches.
+- **Non-intrusive widget** — auto-detected questions show a footer widget instead of immediately hijacking focus; press `Ctrl+Shift+A` when ready.
+- **Deduplication** — questions already answered in the current session are silently skipped.
+- **Structured review panel** — answers are shown as a Q→A table before sending, with Edit / Send / Cancel actions.
+- **Answer history** — browse all past answer sessions with `/pi-anwser history`.
+- **Real editor for "Other"** — the free-text Other option uses a full editor (cursor, backspace, paste) instead of the old char-by-char workaround.
+- **Per-type keyboard hints** — the footer shows relevant shortcuts for the current question type.
+- **Required indicator** — required questions show a `*` marker next to their label.
+- **Live character count** — open-text questions display a running character count.
+- **`sendAfterAnswer`** — set to `true` to return structured JSON answers directly as the tool result, skipping the review step (useful for agentic flows).
 
 ## Tool
 
@@ -33,6 +41,13 @@ Example payload:
       "options": ["TypeScript", "Python", "Go"]
     },
     {
+      "id": "framework",
+      "type": "singleChoice",
+      "label": "Which React framework?",
+      "options": ["Next.js", "Remix", "Vite"],
+      "showIf": { "id": "language", "answer": "TypeScript" }
+    },
+    {
       "id": "notes",
       "type": "open",
       "label": "Any extra requirements?",
@@ -43,15 +58,25 @@ Example payload:
 }
 ```
 
+Set `"sendAfterAnswer": true` to return answers immediately as a structured JSON tool result without any review step — useful when the LLM needs to read answers programmatically in an agentic flow:
+
+```json
+{
+  "questions": [...],
+  "sendAfterAnswer": true
+}
+```
+
 ## Commands
 
 ```text
-/pi-anwser status
-/pi-anwser on
-/pi-anwser off
-/pi-anwser test
-/pi-anwser last
-/pi-anwser reload-config
+/pi-anwser status          Show enabled/disabled state and question counts
+/pi-anwser on              Enable the extension
+/pi-anwser off             Disable the extension
+/pi-anwser test            Open a test overlay with sample questions (incl. a conditional one)
+/pi-anwser last            Re-open the last set of questions
+/pi-anwser history         Browse all answer sessions from the current session
+/pi-anwser reload-config   Reload config from disk without restarting
 ```
 
 ## Shortcuts
@@ -60,12 +85,28 @@ Default shortcuts:
 
 | Shortcut | Action |
 | --- | --- |
-| `Ctrl+Shift+A` | Reopen/toggle Pi Anwser for last questions |
+| `Ctrl+Shift+A` | Open pending questions (or last questions if none pending) |
 | `Alt+Right` | Next question |
 | `Alt+Left` | Previous question |
 | `Ctrl+Enter` | Submit current answer / next |
 | `Ctrl+Shift+S` | Skip question |
 | `Esc` | Cancel popup |
+
+### Inside the Review panel
+
+| Shortcut | Action |
+| --- | --- |
+| `←` / `→` or `Tab` | Cycle between Edit / Send / Cancel |
+| `Enter` | Confirm selected action |
+| `↑` / `↓` | Scroll Q&A list |
+| `Esc` | Cancel |
+
+### Yes/No question shortcuts
+
+| Key | Action |
+| --- | --- |
+| `Y` | Select Yes and advance |
+| `N` | Select No and advance |
 
 ## Configuration
 
