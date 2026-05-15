@@ -321,7 +321,9 @@ class QuestionOverlay {
 		};
 
 		this.editor = new Editor(tui, editorTheme);
-		this.editor.onSubmit = () => this.saveAndNext();
+		// Ctrl+Enter is handled globally at the top of handleInput;
+		// plain Enter should insert a newline, not advance the question.
+		// this.editor.onSubmit intentionally not set.
 
 		// Feature 6: dedicated editor for the "Other" free-text field
 		this.otherEditor = new Editor(tui, editorTheme);
@@ -584,10 +586,10 @@ class QuestionOverlay {
 			q.type === "open"
 				? "Ctrl+Enter next  ·  Esc cancel"
 				: q.type === "yesNo"
-					? "Y yes  ·  N no  ·  ↑↓ navigate  ·  Enter confirm  ·  Esc cancel"
+					? "Y yes  ·  N no  ·  ↑↓ navigate  ·  Ctrl+Enter confirm  ·  Esc cancel"
 					: q.type === "multipleChoice"
-						? "↑↓ navigate  ·  Space toggle  ·  Enter next  ·  Esc cancel"
-						: "↑↓ navigate  ·  Enter select  ·  Esc cancel";
+						? "↑↓ navigate  ·  Space toggle  ·  Ctrl+Enter next  ·  Esc cancel"
+						: "↑↓ navigate  ·  Ctrl+Enter select  ·  Esc cancel";
 		lines.push(row(` ${th.fg("dim", hint)}`));
 		if (this.config.popup.allowBack && pos > 0) {
 			lines.push(row(` ${th.fg("dim", `Alt+← back  ·  Alt+→ next  ·  Ctrl+Shift+S skip`)}`));
